@@ -23,7 +23,7 @@
       import * as THREE from 'three';
 
       // Configurable stuff
-      const PNT_LIGHT_INTENSITY = 1.0;
+      const PNT_LIGHT_INTENSITY = 5.0;
       const PNT_LIGHT_COLOR = 0xFFFFAA;
       const AMB_LIGHT_INTENSITY = 0x333333;
       const SPHERE_RADIUS = 5.0;
@@ -45,12 +45,7 @@
       camera.getViewSize(100, viewportSize);
 
       // LIGHTS
-      var pointLight = new THREE.PointLight({
-        color: PNT_LIGHT_COLOR,
-        intensity: PNT_LIGHT_INTENSITY,
-        distance: 0,
-        decay: 0,
-      });
+      var pointLight = new THREE.PointLight(PNT_LIGHT_COLOR, PNT_LIGHT_INTENSITY, 0, 0);
       pointLight.position.set(viewportSize.x/2*-1, viewportSize.y/2, SPHERE_RADIUS);
       scene.add(pointLight);
       // Add ambient light to soften shadows
