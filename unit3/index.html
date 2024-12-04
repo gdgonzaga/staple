@@ -23,7 +23,7 @@
       import * as THREE from 'three';
 
       // Configurable stuff
-      const PNT_LIGHT_INTENSITY = 4.0;
+      const PNT_LIGHT_INTENSITY = 1.0;
       const PNT_LIGHT_COLOR = 0xFFFFAA;
       const AMB_LIGHT_INTENSITY = 0x333333;
       const SPHERE_RADIUS = 5.0;
@@ -45,16 +45,20 @@
       camera.getViewSize(100, viewportSize);
 
       // LIGHTS
-      var pointLight = new THREE.PointLight(PNT_LIGHT_COLOR, PNT_LIGHT_INTENSITY, 0, 0);
-      pointLight.position.set(viewportSize.x/2*-1, viewportSize.y/2, SPHERE_RADIUS, 5);
+      var pointLight = new THREE.PointLight({
+        color: PNT_LIGHT_COLOR,
+        intensity: PNT_LIGHT_INTENSITY,
+        distance: 0,
+        decay: 0,
+      });
+      pointLight.position.set(viewportSize.x/2*-1, viewportSize.y/2, SPHERE_RADIUS);
       scene.add(pointLight);
-
       // Add ambient light to soften shadows
       var ambientLight = new THREE.AmbientLight(AMB_LIGHT_INTENSITY);
       scene.add(ambientLight);
 
       // MATERIALS
-      // Create Phong material that can react with lights
+      // Create Phong materials that can react with lights
       const sphereMaterial = new THREE.MeshPhongMaterial({ color: 'blue' });
       const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
 
@@ -66,12 +70,12 @@
       var directionX = 1.0;
       var directionY = 1.0;
 
-      // Background plane
+      // BACKGROUND PLANE
       var planeGeom = new THREE.PlaneGeometry(viewportSize.x * 1.2, viewportSize.y * 1.2);
       const plane = new THREE.Mesh(planeGeom, planeMaterial);
       scene.add(plane);
 
-      // Animation loop
+      // ANIMATION LOOP
       function animate() {
         // Check if sphere is at the border, change direction if it is
         if (Math.abs(sphere.position.x)+SPHERE_RADIUS > viewportSize.x/2.0) {
