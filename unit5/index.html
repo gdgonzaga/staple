@@ -74,6 +74,7 @@
 
       // Add the red carbon atom
       const carbon = new THREE.Mesh(cSphereGeom, redMaterial);
+      carbon.castShadow = true;
       molecule.add(carbon);
 
       // HYDROGEN BONDS
