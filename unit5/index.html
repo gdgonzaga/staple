@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Unit 5 Programming Assignment - Rotatable Molecule</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1><center>Click and drag the molecule to rotate</center></h1>
+    <script src="http://uopeopleweb.com/js/Detector.js"></script>
+    <script type="module">
+      import { DragControls } from 'three/addons/controls/DragControls.js';
+      import * as THREE from 'three';
+
+      // Put screen size in variables
+      const windowHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
+
+      // Set up renderer, canvas, scene
+      const renderer = new THREE.WebGLRenderer();
+      // enable shadows
+      renderer.shadowMap.enabled = true;
+      renderer.setSize(windowWidth, windowHeight);
+      document.body.appendChild(renderer.domElement);
+      const scene = new THREE.Scene();
+
+      // camera setup
+      const camera = new THREE.PerspectiveCamera(45, windowWidth/windowHeight, 0.1, 1000);
+      camera.position.z = 15;
+      camera.position.y = 6;
+      camera.rotateX(THREE.MathUtils.degToRad(-30));
+      const viewportSize = new THREE.Vector2();
+      camera.getViewSize(100, viewportSize);
+
+      // ADD POINT LIGHT
+      var pointLight = new THREE.PointLight('white', 5, 0, 0);
+      pointLight.position.set(0, 15, 0);
+      // enable shadows
+      pointLight.castShadow = true;
+      scene.add(pointLight);
+
+      // Add ambient light to soften shadows
+      var ambientLight = new THREE.AmbientLight(0x666666);
+      scene.add(ambientLight);
+
+      // MATERIALS
+      // Create Phong materials that can react with lights
+      const blueMaterial = new THREE.MeshPhongMaterial({ color: 'blue' });
+      const redMaterial = new THREE.MeshPhongMaterial({ color: 'red' });
+      const whiteMaterial = new THREE.MeshPhongMaterial({ color: 'white' });
+      const greenMaterial = new THREE.MeshPhongMaterial({ color: 'green' });
+
+      // GEOMETRIES
+      const hSphereGeom = new THREE.SphereGeometry(0.5, 32, 32, 0, Math.Pi)
+      const cSphereGeom = new THREE.SphereGeometry(0.8, 32, 32, 0, Math.Pi)
+      const cylinderGeom = new THREE.CylinderGeometry(0.1, 0.1, 2)
+      const planeGeom = new THREE.PlaneGeometry(50, 50);
+
+      // Put all objects in a group so they rotate together
+      const molecule = new THREE.Group();
+      scene.add(molecule);
+
+      // Add the red carbon atom
+      const carbon = new THREE.Mesh(cSphereGeom, redMaterial);
+      molecule.add(carbon);
+
+      // HYDROGEN BONDS
+      // First branch
+      // Create an object for the first hydrogen/bond branch
+      const branch1 = new THREE.Object3D();
+
+      // add the blue hydrogen sphere
+      const hydrogen = new THREE.Mesh(hSphereGeom, blueMaterial);
+      hydrogen.position.y = 2;
+      // enable shadows
+      hydrogen.castShadow = true;
+      branch1.add(hydrogen);
+
+      // add the white bond cylinder
+      const bond = new THREE.Mesh(cylinderGeom, whiteMaterial);
+      bond.position.y = 1;
+      // enable shadows
+      bond.castShadow = true;
+      branch1.add(bond);
+
+      // put the branch in the molecule group
+      molecule.add(branch1);
+
+      // ADD THE NEXT 3 BRANCHES
+      // define axes for rotations
+      const xAxis = new THREE.Vector3(1, 0, 0);
+      const yAxis = new THREE.Vector3(0, 1, 0);
+
+      // Second branch
+      const branch2 = branch1.clone();
+      branch2.rotation.x = THREE.MathUtils.degToRad(109.47);
+      molecule.add(branch2);
+
+      // Third branch
+      const branch3 = branch1.clone();
+      branch3.rotateOnWorldAxis(xAxis, THREE.MathUtils.degToRad(109.47));
+      branch3.rotateOnWorldAxis(yAxis, THREE.MathUtils.degToRad(120));
+      molecule.add(branch3);
+
+      // Fourth branch
+      const branch4 = branch1.clone();
+      branch4.rotateOnWorldAxis(xAxis, THREE.MathUtils.degToRad(109.47));
+      branch4.rotateOnWorldAxis(yAxis, THREE.MathUtils.degToRad(240));
+      molecule.add(branch4);
+
+      // BASE PLANE
+      const plane = new THREE.Mesh(planeGeom, greenMaterial);
+      // set position on the scene
+      plane.position.y = -5;
+      plane.rotateX(THREE.MathUtils.degToRad(-90));
+      // enable shadow
+      plane.receiveShadow = true;
+      scene.add(plane);
+
+      // DRAG CONTROLS
+      const controls = new DragControls([molecule], camera, renderer.domElement);
+      // speed up rotation speed
+      controls.rotateSpeed = 5.0;
+      // make sure the whole group rotates
+      controls.transformGroup = true;
+      // make ALL THREE mouse buttons rotate!!!!!
+      controls.mouseButtons = {
+        LEFT: THREE.TOUCH.ROTATE,
+        MIDDLE: THREE.TOUCH.ROTATE,
+        RIGHT: THREE.TOUCH.ROTATE
+      };
+
+      // ANIMATION LOOP
+      renderer.setAnimationLoop(() => renderer.render(scene, camera));
+
+    </script>
+  </body>
+</html>
